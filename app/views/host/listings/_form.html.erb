@@ -1,0 +1,44 @@
+<%= form_with model: [:host, listing], local: true do |f| %>
+  <% if listing.errors.any? %>
+    <div style="color: red;">
+      <h3><%= pluralize(listing.errors.count, "error") %> impidieron guardar este listing:</h3>
+      <ul>
+        <% listing.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :title, "Título" %>
+    <%= f.text_field :title %>
+  </div>
+
+  <div>
+    <%= f.label :description, "Descripción" %>
+    <%= f.text_area :description %>
+  </div>
+
+  <div>
+    <%= f.label :price_per_night, "Precio por noche" %>
+    <%= f.number_field :price_per_night, step: 0.01 %>
+  </div>
+
+  <div>
+    <%= f.label :address, "Dirección" %>
+    <%= f.text_field :address %>
+  </div>
+
+  <div>
+    <%= f.label :latitude %>
+    <%= f.text_field :latitude %>
+  </div>
+
+  <div>
+    <%= f.label :longitude %>
+    <%= f.text_field :longitude %>
+  </div>
+
+  <%= f.submit %>
+<% end %>

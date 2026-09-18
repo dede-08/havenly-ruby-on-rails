@@ -1,0 +1,11 @@
+<h1><%= @listing.title %></h1>
+
+<p><%= @listing.description %></p>
+<p>Precio por noche: $<%= @listing.price_per_night %></p>
+<p>Dirección: <%= @listing.address %></p>
+
+<% if user_signed_in? %>
+  <p>Aquí después irá el botón de "Reservar".</p>
+<% else %>
+  <%= link_to "Inicia sesión para reservar", new_user_session_path %>
+<% end %>

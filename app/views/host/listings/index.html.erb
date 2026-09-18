@@ -1,0 +1,14 @@
+<h1>Mis listings</h1>
+
+<%= link_to "Nuevo listing", new_host_listing_path %>
+
+<ul>
+  <% @listings.each do |listing| %>
+    <li>
+      <%= link_to listing.title, host_listing_path(listing) %>
+      — $<%= listing.price_per_night %>/noche
+      <%= link_to "Editar", edit_host_listing_path(listing) %>
+      <%= link_to "Borrar", host_listing_path(listing), data: { turbo_method: :delete, turbo_confirm: "¿Seguro?" } %>
+    </li>
+  <% end %>
+</ul>

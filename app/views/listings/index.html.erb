@@ -1,0 +1,10 @@
+<h1>Listings disponibles</h1>
+
+<ul>
+  <% @listings.each do |listing| %>
+    <li>
+      <%= link_to listing.title, listing_path(listing) %>
+      — $<%= listing.price_per_night %>/noche
+    </li>
+  <% end %>
+</ul>
