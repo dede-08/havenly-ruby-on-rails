@@ -1,0 +1,11 @@
+<h1>Reserva #<%= @booking.id %></h1>
+
+<p>Listing: <%= @booking.listing.title %></p>
+<p>Check-in: <%= @booking.check_in %></p>
+<p>Check-out: <%= @booking.check_out %></p>
+<p>Total: $<%= @booking.total_price %></p>
+<p>Estado: <%= @booking.status %></p>
+
+<% if @booking.pending? || @booking.confirmed? %>
+  <%= link_to "Cancelar", booking_path(@booking), data: { turbo_method: :delete, turbo_confirm: "¿Seguro?" } %>
+<% end %>

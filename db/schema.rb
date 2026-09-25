@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_13_010251) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_222206) do
+  create_table "bookings", force: :cascade do |t|
+    t.date "check_in", null: false
+    t.date "check_out", null: false
+    t.datetime "created_at", null: false
+    t.integer "guest_id", null: false
+    t.integer "listing_id", null: false
+    t.integer "status", default: 0, null: false
+    t.decimal "total_price", precision: 10, scale: 2, null: false
+    t.datetime "updated_at", null: false
+    t.index ["guest_id"], name: "index_bookings_on_guest_id"
+    t.index ["listing_id"], name: "index_bookings_on_listing_id"
+  end
+
   create_table "listings", force: :cascade do |t|
     t.string "address"
     t.datetime "created_at", null: false
@@ -37,5 +50,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_010251) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "bookings", "listings"
+  add_foreign_key "bookings", "users", column: "guest_id"
   add_foreign_key "listings", "users", column: "host_id"
 end

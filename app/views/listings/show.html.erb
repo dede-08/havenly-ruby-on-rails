@@ -5,7 +5,7 @@
 <p>Dirección: <%= @listing.address %></p>
 
 <% if user_signed_in? %>
-  <p>Aquí después irá el botón de "Reservar".</p>
+  <%= link_to "Reservar", new_listing_booking_path(@listing) %>
 <% else %>
   <%= link_to "Inicia sesión para reservar", new_user_session_path %>
 <% end %>

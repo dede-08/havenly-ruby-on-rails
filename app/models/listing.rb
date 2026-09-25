@@ -3,4 +3,5 @@ class Listing < ApplicationRecord
 
   validates :title, :description, :price_per_night, presence: true
   validates :price_per_night, numericality: { greater_than: 0 }
+  has_many :bookings, dependent: :destroy
 end

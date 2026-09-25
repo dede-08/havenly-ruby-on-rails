@@ -1,0 +1,25 @@
+<h1>Reservar: <%= @listing.title %></h1>
+
+<%= form_with model: @booking, url: listing_bookings_path(@listing), local: true do |f| %>
+  <% if @booking.errors.any? %>
+    <div style="color: red;">
+      <ul>
+        <% @booking.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :check_in, "Check-in" %>
+    <%= f.date_field :check_in %>
+  </div>
+
+  <div>
+    <%= f.label :check_out, "Check-out" %>
+    <%= f.date_field :check_out %>
+  </div>
+
+  <%= f.submit "Reservar" %>
+<% end %>

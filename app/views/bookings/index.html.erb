@@ -1,0 +1,11 @@
+<h1>Mis reservas</h1>
+
+<ul>
+  <% @bookings.each do |booking| %>
+    <li>
+      <%= link_to booking.listing.title, booking_path(booking) %>
+      — <%= booking.check_in %> a <%= booking.check_out %>
+      (<%= booking.status %>)
+    </li>
+  <% end %>
+</ul>
