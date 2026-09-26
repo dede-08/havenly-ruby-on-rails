@@ -4,11 +4,12 @@
 
 <ul>
   <% @listings.each do |listing| %>
-    <li>
-      <%= link_to listing.title, host_listing_path(listing) %>
-      — $<%= listing.price_per_night %>/noche
-      <%= link_to "Editar", edit_host_listing_path(listing) %>
-      <%= link_to "Borrar", host_listing_path(listing), data: { turbo_method: :delete, turbo_confirm: "¿Seguro?" } %>
-    </li>
-  <% end %>
+  <li>
+    <% if listing.photos.attached? %>
+      <%= image_tag listing.photos.first.variant(resize_to_limit: [100, 100]) %>
+    <% end %>
+    <%= link_to listing.title, host_listing_path(listing) %>
+    — $<%= listing.price_per_night %>/noche
+  </li>
+<% end %>
 </ul>

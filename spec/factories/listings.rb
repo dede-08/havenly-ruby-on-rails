@@ -7,5 +7,15 @@ FactoryBot.define do
     latitude { -12.1211 }
     longitude { -77.0296 }
     association :host, factory: [:user, :host]
+
+    trait :with_photo do
+      after(:build) do |listing|
+        listing.photos.attach(
+          io: StringIO.new("fake image content"),
+          filename: "test.jpg",
+          content_type: "image/jpeg"
+        )
+      end
+    end
   end
 end

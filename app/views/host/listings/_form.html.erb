@@ -40,5 +40,19 @@
     <%= f.text_field :longitude %>
   </div>
 
+  <div>
+    <%= f.label :photos, "Fotos" %>
+    <%= f.file_field :photos, multiple: true, accept: "image/*" %>
+  </div>
+
+  <% if listing.photos.attached? %>
+    <div>
+      <p>Fotos actuales:</p>
+      <% listing.photos.each do |photo| %>
+        <%= image_tag photo.variant(resize_to_limit: [150, 150]), style: "margin-right: 8px;" %>
+      <% end %>
+    </div>
+  <% end %>
+
   <%= f.submit %>
 <% end %>

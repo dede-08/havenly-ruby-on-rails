@@ -47,7 +47,7 @@ module Host
     end
 
     def listing_params
-      params.require(:listing).permit(:title, :description, :price_per_night, :address, :latitude, :longitude)
+      params.require(:listing).permit(:title, :description, :price_per_night, :address, :latitude, :longitude, photos: [])
     end
   end
 end

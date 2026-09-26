@@ -1,1 +1,15 @@
-<%= link_to "Test", root_path %>
+<% if @listing.photos.attached? %>
+  <div>
+    <% @listing.photos.each do |photo| %>
+      <%= image_tag photo.variant(resize_to_limit: [600, 400]) %>
+    <% end %>
+  </div>
+<% end %>
+<h1><%= @listing.title %></h1>
+
+<p><%= @listing.description %></p>
+<p>Precio por noche: $<%= @listing.price_per_night %></p>
+<p>Dirección: <%= @listing.address %></p>
+
+<%= link_to "Editar", edit_host_listing_path(@listing) %>
+<%= link_to "Volver", host_listings_path %>

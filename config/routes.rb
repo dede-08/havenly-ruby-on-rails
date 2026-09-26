@@ -5,6 +5,11 @@ Rails.application.routes.draw do
     resources :bookings, only: [:new, :create]
   end
 
-  resources :bookings, only: [:index, :show, :destroy] # "Mis reservas" del guest
+  resources :bookings, only: [:index, :show, :destroy]
+
+  namespace :host do
+    resources :listings
+  end
+
   root "listings#index"
 end
