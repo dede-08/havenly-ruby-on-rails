@@ -1,6 +1,6 @@
 # Havenly
 
-Plataforma de reservas tipo Airbnb construida con **Ruby on Rails 8.1.3.1** y **Ruby 4.0**, como proyecto de portafolio. El objetivo no es solo tener un CRUD funcional, sino demostrar decisiones de arquitectura reales: integridad de datos bajo concurrencia, protección contra accesos no autorizados, y una suite de tests que documenta el comportamiento esperado del sistema.
+Plataforma de reservas construida con **Ruby on Rails 8.1.3.1** y **Ruby 4.0**. El objetivo no es solo tener un CRUD funcional, sino demostrar decisiones de arquitectura reales: integridad de datos bajo concurrencia, protección contra accesos no autorizados, y una suite de tests que documenta el comportamiento esperado del sistema.
 
 ## Stack
 
@@ -56,8 +56,6 @@ scope :overlapping, ->(listing_id, check_in, check_out) {
 ```
 
 Los tests cubren explícitamente los casos límite (una reserva que termina el mismo día que otra empieza **no** se considera solapamiento), que son los que suelen esconder bugs sutiles en este tipo de lógica.
-
-> **Pendiente / siguiente paso**: esta validación corre a nivel de aplicación, lo que deja una ventana de condición de carrera bajo alta concurrencia. Al migrar a PostgreSQL, se planea añadir un constraint `EXCLUDE USING GIST` sobre un `daterange` para garantizar la integridad también a nivel de base de datos.
 
 ### Protección contra IDOR (Insecure Direct Object Reference)
 
