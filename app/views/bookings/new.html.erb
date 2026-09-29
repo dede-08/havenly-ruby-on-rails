@@ -1,6 +1,6 @@
 <h1>Reservar: <%= @listing.title %></h1>
 
-<%= form_with model: @booking, url: listing_bookings_path(@listing), local: true do |f| %>
+<%= form_with model: @booking, url: listing_bookings_path(@listing), local: true, data: { turbo: false } do |f| %>
   <% if @booking.errors.any? %>
     <div style="color: red;">
       <ul>

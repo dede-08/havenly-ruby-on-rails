@@ -17,7 +17,7 @@ class BookingsController < ApplicationController
     @booking.total_price = calculate_total_price(@booking)
 
     if @booking.save
-      redirect_to booking_path(@booking), notice: "¡Reserva confirmada!"
+      redirect_to new_booking_checkout_path(@booking)
     else
       render :new, status: :unprocessable_entity
     end

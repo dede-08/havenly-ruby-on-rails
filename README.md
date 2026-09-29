@@ -39,9 +39,8 @@ Booking
 - Sistema de reservas con validación de no-solapamiento de fechas
 - Protección anti-IDOR: un usuario nunca puede ver, editar o cancelar recursos de otro cambiando el `id` en la URL
 - Cálculo de precio total en el servidor (nunca se confía en datos del formulario)
+-  Pagos con Stripe Checkout: la reserva nace en `pending` y solo pasa a `confirmed` cuando Stripe confirma el pago vía webhook, nunca desde el navegador
 - Tests de modelo y de request específs (RSpec + FactoryBot) cubriendo reglas de negocio y casos de seguridad
-
-## Decisiones técnicas destacables
 
 ### Validación de no-solapamiento de reservas
 
@@ -72,6 +71,12 @@ en vez de `Listing.find(params[:id])`. Esto hace que intentar acceder al recurso
 
 El formulario de reserva solo envía `check_in`/`check_out`; el `total_price` se calcula en el controller a partir del `price_per_night` del listing, evitando que un cliente manipule el precio final desde el HTML.
 
+### Confirmación de pago solo vía webhook
+ 
+El `success_url` al que Stripe redirige tras el pago **nunca** confirma la reserva — el usuario podría cerrar la pestaña antes de llegar, o manipular la URL manualmente. La única fuente de verdad es `StripeWebhooksController`, que verifica la firma criptográfica del evento (`Stripe::Webhook.construct_event`) y solo entonces marca el `Booking` como `confirmed`. En los tests, esta verificación se stubea para probar la lógica propia sin depender de generar firmas HMAC reales.
+ 
+Un detalle de integración que vale la pena documentar: Turbo (Hotwire) intercepta los submits de formulario por `fetch()`, lo cual rompe el redirect cross-origin hacia `checkout.stripe.com` por restricciones de CORS del navegador. Solución: `data: { turbo: false }` en el formulario de creación de booking, forzando una navegación de página completa para esa acción específica.
+
 ## Configuración del entorno de desarrollo
 
 ```bash
@@ -92,11 +97,19 @@ Este proyecto se desarrolló en Windows con Ruby 4.0, una combinación muy recie
 - **Gema `json` 3.0.0**: causaba un `ArgumentError` intermitente ("wrong number of arguments") al acceder a la sesión (afectaba `csrf_meta_tags`, `link_to`, y helpers de Devise). Solución: fijar `gem "json", "< 3.0"` en el `Gemfile`. Reportado en [rails/rails#58685](https://github.com/rails/rails/issues/58685).
 
 ## Testing
-
+ 
 ```bash
 bundle exec rspec
 ```
-
+ 
 Cobertura actual:
 - Specs de modelo para `User`, `Listing` y `Booking` (validaciones, asociaciones, lógica de solapamiento)
-- Request specs para `Host::ListingsController` y `BookingsController` (autorización, casos felices, casos de seguridad)
+- Request specs para `Host::ListingsController`, `BookingsController` y `StripeWebhooksController` (autorización, casos felices, casos de seguridad, confirmación de pago)
+
+### Probar pagos en local
+ 
+```bash
+stripe listen --forward-to localhost:3000/webhooks/stripe --events checkout.session.completed
+```
+ 
+Copia el `whsec_...` que imprime a `stripe.webhook_secret` en `rails credentials:edit`. Tarjeta de prueba: `4242 4242 4242 4242`, cualquier fecha futura, cualquier CVC.
