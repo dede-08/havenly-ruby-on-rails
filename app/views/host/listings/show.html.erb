@@ -13,3 +13,7 @@
 
 <%= link_to "Editar", edit_host_listing_path(@listing) %>
 <%= link_to "Volver", host_listings_path %>
+
+<h2>Notificaciones de reservas</h2>
+<%= turbo_stream_from current_user %>
+<div id="bookings"></div>

@@ -6,6 +6,14 @@
       <%= link_to booking.listing.title, booking_path(booking) %>
       — <%= booking.check_in %> a <%= booking.check_out %>
       (<%= booking.status %>)
+
+      <% if booking.confirmed? && booking.check_out.past? %>
+        <% if booking.review.present? %>
+          <span>Ya dejaste tu review</span>
+        <% else %>
+          <%= link_to "Dejar review", new_booking_review_path(booking) %>
+        <% end %>
+      <% end %>
     </li>
   <% end %>
 </ul>

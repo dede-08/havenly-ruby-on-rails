@@ -30,4 +30,22 @@ RSpec.describe Listing, type: :model do
     listing = build(:listing, host: nil)
     expect(listing).not_to be_valid
   end
+
+  describe "#average_rating" do
+    it "devuelve nil si no tiene reviews" do
+      listing = create(:listing)
+      expect(listing.average_rating).to be_nil
+    end
+
+    it "calcula el promedio redondeado a 1 decimal" do
+      listing = create(:listing)
+      booking1 = create(:booking, :completed, listing: listing)
+      booking2 = create(:booking, :completed, listing: listing, check_in: 20.days.ago.to_date, check_out: 15.days.ago.to_date)
+
+      create(:review, booking: booking1, rating: 5)
+      create(:review, booking: booking2, rating: 4)
+
+      expect(listing.average_rating).to eq(4.5)
+    end
+  end
 end

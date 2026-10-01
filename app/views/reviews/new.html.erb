@@ -1,0 +1,25 @@
+<h1>Review para <%= @booking.listing.title %></h1>
+
+<%= form_with model: @review, url: booking_review_path(@booking), local: true do |f| %>
+  <% if @review.errors.any? %>
+    <div style="color: red;">
+      <ul>
+        <% @review.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :rating, "Calificación (1-5)" %>
+    <%= f.number_field :rating, min: 1, max: 5 %>
+  </div>
+
+  <div>
+    <%= f.label :comment, "Comentario" %>
+    <%= f.text_area :comment %>
+  </div>
+
+  <%= f.submit "Enviar review" %>
+<% end %>

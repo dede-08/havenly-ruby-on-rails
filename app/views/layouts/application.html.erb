@@ -21,6 +21,7 @@
   <nav>
     <% if user_signed_in? %>
       <%= link_to "Mi cuenta", edit_user_registration_path %> |
+      <%= link_to "Mis reservas", bookings_path %> |
       <% if current_user.host? %>
         <%= link_to "Mis listings", host_listings_path %> |
       <% end %>
@@ -30,6 +31,5 @@
       <%= link_to "Registrarse", new_user_registration_path %>
     <% end %>
   </nav>
-
   <%= yield %>
 </body>

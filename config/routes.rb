@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   resources :bookings, only: [:index, :show, :destroy] do
     resource :checkout, only: [:new], controller: "checkouts"
+    resource :review, only: [:new, :create]
   end
 
   namespace :host do

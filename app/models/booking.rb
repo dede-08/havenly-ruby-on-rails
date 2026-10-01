@@ -2,11 +2,15 @@ class Booking < ApplicationRecord
   belongs_to :listing
   belongs_to :guest, class_name: "User"
 
+  after_create_commit -> { broadcast_prepend_to listing.host, target: "bookings", partial: "bookings/notification", locals: { booking: self } }
+  after_update_commit -> { broadcast_replace_to listing.host, target: "booking_#{id}", partial: "bookings/notification", locals: { booking: self } }
+
   enum :status, { pending: 0, confirmed: 1, cancelled: 2 }, default: :pending
 
   validates :check_in, :check_out, presence: true
   validate :check_out_after_check_in
   validate :no_overlapping_bookings, on: :create
+  has_one :review, dependent: :destroy
 
   # Scope clave: encuentra reservas de un listing que se crucen con un rango de fechas dado.
   # Dos rangos [a, b] y [c, d] se solapan si a < d y c < b.

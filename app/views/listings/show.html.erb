@@ -4,6 +4,17 @@
 <p>Precio por noche: $<%= @listing.price_per_night %></p>
 <p>Dirección: <%= @listing.address %></p>
 
+<% if @listing.average_rating.present? %>
+  <p>⭐ <%= @listing.average_rating %>/5 (<%= @listing.reviews.count %> reviews)</p>
+<% end %>
+
+<% @listing.reviews.each do |review| %>
+  <div>
+    <p>⭐ <%= review.rating %>/5</p>
+    <p><%= review.comment %></p>
+  </div>
+<% end %>
+
 <% if user_signed_in? %>
   <%= link_to "Reservar", new_listing_booking_path(@listing) %>
 <% else %>
