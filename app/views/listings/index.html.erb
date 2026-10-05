@@ -1,10 +1,28 @@
 <h1>Listings disponibles</h1>
 
+<%= search_form_for @q, url: listings_path do |f| %>
+  <%= f.search_field :title_or_description_cont, placeholder: "Buscar..." %>
+  <%= f.number_field :price_per_night_gteq, placeholder: "Precio mín." %>
+  <%= f.number_field :price_per_night_lteq, placeholder: "Precio máx." %>
+
+  <%= text_field_tag :location, params[:location], placeholder: "Ciudad o dirección" %>
+  <%= date_field_tag :check_in, params[:check_in] %>
+  <%= date_field_tag :check_out, params[:check_out] %>
+
+  <%= f.submit "Buscar" %>
+<% end %>
+
 <ul>
   <% @listings.each do |listing| %>
     <li>
+      <% if listing.photos.attached? %>
+        <%= image_tag listing.photos.first.variant(resize_to_limit: [100, 100]) %>
+      <% end %>
       <%= link_to listing.title, listing_path(listing) %>
       — $<%= listing.price_per_night %>/noche
+      <% if listing.average_rating.present? %>
+        ⭐ <%= listing.average_rating %>
+      <% end %>
     </li>
   <% end %>
 </ul>

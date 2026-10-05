@@ -31,5 +31,10 @@
       <%= link_to "Registrarse", new_user_registration_path %>
     <% end %>
   </nav>
+
+  <% if flash[:alert] %>
+    <p style="color: red;"><%= flash[:alert] %></p>
+  <% end %>
+
   <%= yield %>
 </body>

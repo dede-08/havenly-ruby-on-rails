@@ -73,5 +73,6 @@ group :test do
 end
 
 gem "devise"
-
 gem "json", "< 3.0"
+gem "ransack"
+gem "geocoder"

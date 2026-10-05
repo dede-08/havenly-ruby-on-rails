@@ -48,4 +48,53 @@ RSpec.describe Listing, type: :model do
       expect(listing.average_rating).to eq(4.5)
     end
   end
+
+  describe "#available_between" do
+    let(:host) { create(:user, :host) }
+    let(:listing) { create(:listing, host: host) }
+    let(:guest) { create(:user) }
+
+    it "incluye el listing si no tiene reservas" do
+      result = Listing.available_between(Date.new(2026, 12, 1), Date.new(2026, 12, 5))
+      expect(result).to include(listing)
+    end
+
+    it "excluye el listing si hay una reserva confirmada que se cruza" do
+      create(:booking, listing: listing, guest: guest, status: :confirmed,
+          check_in: Date.new(2026, 12, 2), check_out: Date.new(2026, 12, 6))
+
+      result = Listing.available_between(Date.new(2026, 12, 1), Date.new(2026, 12, 5))
+      expect(result).not_to include(listing)
+    end
+
+    it "excluye el listing si hay una reserva pending que se cruza" do
+      create(:booking, listing: listing, guest: guest, status: :pending,
+          check_in: Date.new(2026, 12, 2), check_out: Date.new(2026, 12, 6))
+
+      result = Listing.available_between(Date.new(2026, 12, 1), Date.new(2026, 12, 5))
+      expect(result).not_to include(listing)
+    end
+
+    it "incluye el listing si la reserva que se cruza está cancelled" do
+      create(:booking, listing: listing, guest: guest, status: :cancelled,
+          check_in: Date.new(2026, 12, 2), check_out: Date.new(2026, 12, 6))
+
+      result = Listing.available_between(Date.new(2026, 12, 1), Date.new(2026, 12, 5))
+      expect(result).to include(listing)
+    end
+
+    it "incluye el listing si la reserva existente no se cruza con el rango buscado" do
+      create(:booking, listing: listing, guest: guest, status: :confirmed,
+          check_in: Date.new(2026, 11, 1), check_out: Date.new(2026, 11, 5))
+
+      result = Listing.available_between(Date.new(2026, 12, 1), Date.new(2026, 12, 5))
+      expect(result).to include(listing)
+    end
+
+    it "devuelve todos los listings si no se pasan fechas" do
+      other_listing = create(:listing, host: host, title: "Otro depa")
+      result = Listing.available_between(nil, nil)
+      expect(result).to include(listing, other_listing)
+    end
+  end
 end

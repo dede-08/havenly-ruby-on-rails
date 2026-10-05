@@ -40,6 +40,9 @@ Booking
 - Protección anti-IDOR: un usuario nunca puede ver, editar o cancelar recursos de otro cambiando el `id` en la URL
 - Cálculo de precio total en el servidor (nunca se confía en datos del formulario)
 -  Pagos con Stripe Checkout: la reserva nace en `pending` y solo pasa a `confirmed` cuando Stripe confirma el pago vía webhook, nunca desde el navegador
+-  Reviews: solo se puede dejar una review después de completar una estadía pagada (`confirmed` + `check_out` pasado), una review por booking (constraint único en BD)
+-  Notificaciones en tiempo real con Turbo Streams/ActionCable: el host ve aparecer nuevas reservas en su listing sin recargar la página
+-  Búsqueda por texto y rango de precio (Ransack) y por proximidad geográfica (Geocoder), combinada con el filtro de disponibilidad por fechas
 - Tests de modelo y de request específs (RSpec + FactoryBot) cubriendo reglas de negocio y casos de seguridad
 
 ### Validación de no-solapamiento de reservas
@@ -76,6 +79,25 @@ El formulario de reserva solo envía `check_in`/`check_out`; el `total_price` se
 El `success_url` al que Stripe redirige tras el pago **nunca** confirma la reserva — el usuario podría cerrar la pestaña antes de llegar, o manipular la URL manualmente. La única fuente de verdad es `StripeWebhooksController`, que verifica la firma criptográfica del evento (`Stripe::Webhook.construct_event`) y solo entonces marca el `Booking` como `confirmed`. En los tests, esta verificación se stubea para probar la lógica propia sin depender de generar firmas HMAC reales.
  
 Un detalle de integración que vale la pena documentar: Turbo (Hotwire) intercepta los submits de formulario por `fetch()`, lo cual rompe el redirect cross-origin hacia `checkout.stripe.com` por restricciones de CORS del navegador. Solución: `data: { turbo: false }` en el formulario de creación de booking, forzando una navegación de página completa para esa acción específica.
+
+### Reviews solo tras completar la estadía
+ 
+`Review` valida en el modelo que su `booking` asociado esté `confirmed` y con `check_out` en el pasado — no se puede dejar una review de algo que no se pagó o aún no ocurrió. Además, un índice único en `reviews.booking_id` garantiza a nivel de base de datos que un booking solo puede tener una review, cerrando la puerta a condiciones de carrera.
+ 
+### Tiempo real con Turbo Streams
+ 
+`Booking` transmite (`broadcast_prepend_to`/`broadcast_replace_to`) a un canal específico del host dueño del listing (`listing.host`), no a un canal global — así cada host solo recibe notificaciones de sus propias reservas. La vista del host se suscribe con `turbo_stream_from current_user`, y las actualizaciones llegan vía WebSocket (ActionCable, adapter `async` en desarrollo) sin JavaScript personalizado de por medio.
+
+### Búsqueda y filtros con Ransack + Geocoder
+ 
+El filtro de disponibilidad reutiliza la misma lógica de solapamiento de fechas que `Booking` (`available_between`), manteniendo una sola fuente de verdad para esa regla de negocio en vez de duplicarla.
+ 
+Para el filtro por ubicación, la aplicación **geocodifica el texto manualmente** (`Geocoder.search(...)`) antes de llamarlo con `.near(coordinates, ...)`, en vez de pasarle el string directamente al scope. Esto evita un bug encontrado en la combinación Rails 8.1/Ruby 4.0 donde `.near` con un string que no geocodifica bien lanza un `ArgumentError` interno, y de paso permite mostrar un mensaje claro ("ubicación no encontrada") en vez de un error 500.
+ 
+**Gotchas documentados de Geocoder** (útiles si alguien más toca este código):
+- `.near` modifica el `SELECT` para incluir columnas calculadas (`distance`, `bearing`); por eso `.count` simple falla — hay que usar `.count(:all)`.
+- Nominatim (el servicio de geocoding gratuito usado por defecto) exige un `User-Agent` identificable y tiene rate-limit de 1 req/seg — configurado en `config/initializers/geocoder.rb`.
+- La precisión de la geocodificación depende de qué tan específico sea el texto buscado (un país entero geocodifica a un punto central, no sirve para buscar "cerca de mí" a nivel ciudad).
 
 ## Configuración del entorno de desarrollo
 
