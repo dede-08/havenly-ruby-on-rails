@@ -30,6 +30,26 @@ RSpec.describe "StripeWebhooks", type: :request do
         expect(response).to have_http_status(:ok)
         expect(booking.reload.status).to eq("confirmed")
       end
+      before { ActiveJob::Base.queue_adapter = :test }
+
+      it "encola el email de confirmación" do
+        event = stripe_event(type: "checkout.session.completed", booking_id: booking.id)
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(event)
+
+        expect {
+          post "/webhooks/stripe", params: {}, headers: { "HTTP_STRIPE_SIGNATURE" => "fake_sig" }
+        }.to have_enqueued_mail(BookingMailer, :confirmation)
+      end
+
+      it "no reenvía el email si el webhook llega duplicado" do
+        booking.update!(status: :confirmed)
+        event = stripe_event(type: "checkout.session.completed", booking_id: booking.id)
+        allow(Stripe::Webhook).to receive(:construct_event).and_return(event)
+
+        expect {
+          post "/webhooks/stripe", params: {}, headers: { "HTTP_STRIPE_SIGNATURE" => "fake_sig" }
+        }.not_to have_enqueued_mail(BookingMailer, :confirmation)
+      end
     end
 
     context "cuando el evento no es relevante" do

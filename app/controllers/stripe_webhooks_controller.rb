@@ -16,7 +16,11 @@ class StripeWebhooksController < ApplicationController
     when "checkout.session.completed"
       session = event.data.object
       booking = Booking.find(session.metadata.booking_id)
-      booking.update!(status: :confirmed)
+
+      if booking.pending?
+        booking.update!(status: :confirmed)
+        BookingMailer.confirmation(booking).deliver_later
+      end
     end
 
     head :ok

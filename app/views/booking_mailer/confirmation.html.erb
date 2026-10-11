@@ -1,0 +1,9 @@
+<h1>¡Reserva confirmada!</h1>
+
+<p>Hola, tu pago fue recibido y tu reserva en <strong><%= @booking.listing.title %></strong> está confirmada.</p>
+
+<ul>
+  <li>Check-in: <%= @booking.check_in %></li>
+  <li>Check-out: <%= @booking.check_out %></li>
+  <li>Total pagado: $<%= @booking.total_price %></li>
+</ul>

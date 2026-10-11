@@ -39,10 +39,10 @@ Booking
 - Sistema de reservas con validación de no-solapamiento de fechas
 - Protección anti-IDOR: un usuario nunca puede ver, editar o cancelar recursos de otro cambiando el `id` en la URL
 - Cálculo de precio total en el servidor (nunca se confía en datos del formulario)
--  Pagos con Stripe Checkout: la reserva nace en `pending` y solo pasa a `confirmed` cuando Stripe confirma el pago vía webhook, nunca desde el navegador
--  Reviews: solo se puede dejar una review después de completar una estadía pagada (`confirmed` + `check_out` pasado), una review por booking (constraint único en BD)
--  Notificaciones en tiempo real con Turbo Streams/ActionCable: el host ve aparecer nuevas reservas en su listing sin recargar la página
--  Búsqueda por texto y rango de precio (Ransack) y por proximidad geográfica (Geocoder), combinada con el filtro de disponibilidad por fechas
+- Pagos con Stripe Checkout: la reserva nace en `pending` y solo pasa a `confirmed` cuando Stripe confirma el pago vía webhook, nunca desde el navegador
+- Reviews: solo se puede dejar una review después de completar una estadía pagada (`confirmed` + `check_out` pasado), una review por booking (constraint único en BD)
+- Notificaciones en tiempo real con Turbo Streams/ActionCable: el host ve aparecer nuevas reservas en su listing sin recargar la página
+- Búsqueda por texto y rango de precio (Ransack) y por proximidad geográfica (Geocoder), combinada con el filtro de disponibilidad por fechas
 - Tests de modelo y de request específs (RSpec + FactoryBot) cubriendo reglas de negocio y casos de seguridad
 
 ### Validación de no-solapamiento de reservas
