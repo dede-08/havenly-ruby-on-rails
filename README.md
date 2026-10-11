@@ -8,9 +8,13 @@ Plataforma de reservas construida con **Ruby on Rails 8.1.3.1** y **Ruby 4.0**. 
 - **Rails** 8.1.3.1
 - **Base de datos**: SQLite (desarrollo/test) — pensado para migrar a PostgreSQL antes de producción
 - **Autenticación**: Devise
+- **Pagos**: Stripe Checkout + webhooks
+- **Background jobs y emails**: Active Job + Solid Queue (incluido en Rails 8), Action Mailer
 - **Archivos**: Active Storage (fotos de listings)
+- **Búsqueda y filtros**: Ransack (texto/precio) + Geocoder (proximidad por ubicación)
 - **Testing**: RSpec + FactoryBot
 - **Frontend**: ERB + Turbo (Hotwire)
+- **CI**: GitHub Actions (RSpec, RuboCop, Brakeman, bundler-audit, importmap audit)
 
 ## Modelo de dominio
 
@@ -43,6 +47,8 @@ Booking
 - Reviews: solo se puede dejar una review después de completar una estadía pagada (`confirmed` + `check_out` pasado), una review por booking (constraint único en BD)
 - Notificaciones en tiempo real con Turbo Streams/ActionCable: el host ve aparecer nuevas reservas en su listing sin recargar la página
 - Búsqueda por texto y rango de precio (Ransack) y por proximidad geográfica (Geocoder), combinada con el filtro de disponibilidad por fechas
+- Email de confirmación de reserva enviado en background (`deliver_later`) tras el pago
+- CI en GitHub Actions: tests, lint y escaneos de seguridad en cada push
 - Tests de modelo y de request específs (RSpec + FactoryBot) cubriendo reglas de negocio y casos de seguridad
 
 ### Validación de no-solapamiento de reservas
@@ -98,6 +104,10 @@ Para el filtro por ubicación, la aplicación **geocodifica el texto manualmente
 - `.near` modifica el `SELECT` para incluir columnas calculadas (`distance`, `bearing`); por eso `.count` simple falla — hay que usar `.count(:all)`.
 - Nominatim (el servicio de geocoding gratuito usado por defecto) exige un `User-Agent` identificable y tiene rate-limit de 1 req/seg — configurado en `config/initializers/geocoder.rb`.
 - La precisión de la geocodificación depende de qué tan específico sea el texto buscado (un país entero geocodifica a un punto central, no sirve para buscar "cerca de mí" a nivel ciudad).
+
+### Emails en background y webhook idempotente
+ 
+El email de confirmación se encola con `deliver_later` en vez de enviarse dentro del request del webhook: Stripe espera una respuesta rápida, y un fallo al enviar el correo no debe afectar la confirmación del pago. Además, el handler solo confirma y envía el email si el booking sigue en `pending`, de modo que los reintentos de Stripe (que puede reenviar el mismo evento) no generan emails duplicados. Ambos comportamientos están cubiertos por tests.
 
 ## Configuración del entorno de desarrollo
 
