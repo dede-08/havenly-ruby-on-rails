@@ -6,7 +6,7 @@ FactoryBot.define do
     address { "Av. Larco 123, Miraflores" }
     latitude { -12.1211 }
     longitude { -77.0296 }
-    association :host, factory: [:user, :host]
+    association :host, factory: [ :user, :host ]
 
     trait :with_photo do
       after(:build) do |listing|

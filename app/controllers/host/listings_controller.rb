@@ -1,6 +1,6 @@
 module Host
   class ListingsController < BaseController
-    before_action :set_listing, only: [:show, :edit, :update, :destroy]
+    before_action :set_listing, only: [ :show, :edit, :update, :destroy ]
 
     def index
       @listings = current_user.listings
