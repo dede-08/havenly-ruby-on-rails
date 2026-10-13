@@ -10,7 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_01_005551) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_002754) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "btree_gist"
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -50,6 +54,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_005551) do
     t.datetime "updated_at", null: false
     t.index ["guest_id"], name: "index_bookings_on_guest_id"
     t.index ["listing_id"], name: "index_bookings_on_listing_id"
+    t.exclusion_constraint "listing_id WITH =, daterange(check_in, check_out, '[)'::text) WITH &&", where: "status <> 2", using: :gist, name: "bookings_no_overlapping_dates"
   end
 
   create_table "listings", force: :cascade do |t|

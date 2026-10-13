@@ -5,6 +5,35 @@ RSpec.describe Booking, type: :model do
   let(:listing) { create(:listing, host: host) }
   let(:guest) { create(:user) }
 
+  describe "constraint a nivel de base de datos" do
+    before do
+      create(:booking, listing: listing, guest: guest,
+                      check_in: Date.new(2026, 10, 1), check_out: Date.new(2026, 10, 5))
+    end
+
+    it "rechaza reservas solapadas aunque se salten las validaciones" do
+      overlapping = build(:booking, listing: listing, guest: guest,
+                                    check_in: Date.new(2026, 10, 3), check_out: Date.new(2026, 10, 7))
+
+      expect { overlapping.save!(validate: false) }.to raise_error(ActiveRecord::ExclusionViolation)
+    end
+
+    it "permite reservas consecutivas" do
+      consecutive = build(:booking, listing: listing, guest: guest,
+                                    check_in: Date.new(2026, 10, 5), check_out: Date.new(2026, 10, 8))
+
+      expect { consecutive.save!(validate: false) }.not_to raise_error
+    end
+
+    it "ignora reservas canceladas" do
+      Booking.update_all(status: Booking.statuses[:cancelled])
+      overlapping = build(:booking, listing: listing, guest: guest,
+                                    check_in: Date.new(2026, 10, 3), check_out: Date.new(2026, 10, 7))
+
+      expect { overlapping.save!(validate: false) }.not_to raise_error
+    end
+  end
+
   describe "validaciones básicas" do
     it "es válido con atributos válidos" do
       booking = build(:booking, listing: listing, guest: guest)

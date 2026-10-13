@@ -19,8 +19,11 @@ class BookingsController < ApplicationController
     if @booking.save
       redirect_to new_booking_checkout_path(@booking)
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
+  rescue ActiveRecord::ExclusionViolation
+    @booking.errors.add(:base, "Ya existe una reserva para estas fechas")
+    render :new, status: :unprocessable_content
   end
 
   def show
