@@ -32,12 +32,13 @@ end
 
 # Una estadía ya completada con su review, para que se vea el promedio de rating
 listing = Listing.find_by!(title: "Depa en Miraflores")
-past_booking = Booking.find_or_create_by!(listing: listing, guest: guest, check_in: Date.current - 30) do |b|
-  b.check_out = Date.current - 26
-  b.status = :confirmed
-  b.total_price = 480
-end
-Review.find_or_create_by!(booking: past_booking) do |r|
-  r.rating = 5
-  r.comment = "Excelente ubicación y muy limpio. Volvería sin dudarlo."
+
+if listing.bookings.none?
+  past_booking = Booking.create!(
+    listing: listing, guest: guest,
+    check_in: Date.current - 30, check_out: Date.current - 26,
+    status: :confirmed, total_price: 480
+  )
+  Review.create!(booking: past_booking, rating: 5,
+                 comment: "Excelente ubicación y muy limpio. Volvería sin dudarlo.")
 end
