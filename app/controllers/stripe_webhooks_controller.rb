@@ -4,11 +4,13 @@ class StripeWebhooksController < ApplicationController
   def create
     payload = request.body.read
     sig_header = request.env["HTTP_STRIPE_SIGNATURE"]
-    endpoint_secret = Rails.application.credentials.dig(:stripe, :webhook_secret)
+    endpoint_secret = ENV["STRIPE_WEBHOOK_SECRET"].presence ||
+                      Rails.application.credentials.dig(:stripe, :webhook_secret)
 
     begin
       event = Stripe::Webhook.construct_event(payload, sig_header, endpoint_secret)
-    rescue JSON::ParserError, Stripe::SignatureVerificationError
+    rescue JSON::ParserError, Stripe::SignatureVerificationError => e
+      Rails.logger.warn("Stripe webhook rechazado: #{e.class}: #{e.message}")
       return head :bad_request
     end
 
