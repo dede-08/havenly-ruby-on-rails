@@ -3,6 +3,7 @@
   <head>
     <title><%= content_for(:title) || "Havenly" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="dark">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Havenly">
     <meta name="mobile-web-app-capable" content="yes">
@@ -20,30 +21,30 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="flex min-h-screen flex-col bg-stone-50 text-stone-800 antialiased">
-    <header class="border-b border-stone-200 bg-white">
+  <body class="flex min-h-screen flex-col bg-zinc-950 text-zinc-100 antialiased">
+    <header class="border-b border-zinc-800 bg-zinc-900">
       <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <%= link_to "Havenly", root_path, class: "text-xl font-bold tracking-tight text-teal-700" %>
+        <%= link_to "Havenly", root_path, class: "text-xl font-bold tracking-tight text-brand-400" %>
 
         <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
           <% if user_signed_in? %>
-            <%= link_to "Mis reservas", bookings_path, class: "text-stone-600 hover:text-teal-700" %>
+            <%= link_to "Mis reservas", bookings_path, class: "text-zinc-400 hover:text-zinc-100" %>
             <% if current_user.host? %>
-              <%= link_to "Mis listings", host_listings_path, class: "text-stone-600 hover:text-teal-700" %>
+              <%= link_to "Mis listings", host_listings_path, class: "text-zinc-400 hover:text-zinc-100" %>
             <% end %>
-            <%= link_to "Mi cuenta", edit_user_registration_path, class: "text-stone-600 hover:text-teal-700" %>
+            <%= link_to "Mi cuenta", edit_user_registration_path, class: "text-zinc-400 hover:text-zinc-100" %>
             <%= button_to "Salir", destroy_user_session_path, method: :delete,
-                  form: { class: "inline" }, class: "cursor-pointer text-stone-600 hover:text-teal-700" %>
+                  form: { class: "inline" }, class: "cursor-pointer text-zinc-400 hover:text-zinc-100" %>
           <% else %>
-            <%= link_to "Iniciar sesión", new_user_session_path, class: "text-stone-600 hover:text-teal-700" %>
+            <%= link_to "Iniciar sesión", new_user_session_path, class: "text-zinc-400 hover:text-zinc-100" %>
             <%= link_to "Registrarse", new_user_registration_path,
-                  class: "rounded-lg bg-teal-600 px-4 py-2 text-white hover:bg-teal-700" %>
+                  class: "rounded-lg bg-brand-600 px-4 py-2 text-zinc-100 hover:bg-brand-700" %>
           <% end %>
         </div>
       </nav>
     </header>
 
-    <% { notice: "border-teal-200 bg-teal-50 text-teal-800", alert: "border-red-200 bg-red-50 text-red-800" }.each do |type, classes| %>
+    <% { notice: "border-zinc-700 bg-zinc-900 text-zinc-200", alert: "border-brand-700 bg-brand-800/30 text-red-200" }.each do |type, classes| %>
       <% if flash[type].present? %>
         <div class="mx-auto mt-4 w-full max-w-6xl px-4">
           <p class="rounded-lg border px-4 py-3 text-sm <%= classes %>"><%= flash[type] %></p>
@@ -55,8 +56,8 @@
       <%= yield %>
     </main>
 
-    <footer class="border-t border-stone-200 bg-white py-6 text-center text-xs text-stone-500">
-      Havenly · Proyecto de portafolio · Los pagos funcionan en modo de prueba
+    <footer class="border-t border-zinc-800 bg-zinc-900 py-6 text-center text-xs text-zinc-500">
+      Havenly - v1
     </footer>
   </body>
 </html>

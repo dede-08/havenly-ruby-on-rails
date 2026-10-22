@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  /* Rojo mate oscuro: poco saturado, sin brillo */
+  --color-brand-400: #c25b56;
+  --color-brand-500: #a8403c;
+  --color-brand-600: #8f3330;
+  --color-brand-700: #7a2a28;
+  --color-brand-800: #5f2120;
+}
+
+@layer base {
+  /* Hace que los controles nativos (calendario de fechas, scrollbars) también salgan oscuros */
+  :root {
+    color-scheme: dark;
+  }
+}
