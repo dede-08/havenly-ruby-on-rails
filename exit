@@ -1,0 +1,35 @@
+warning: in the working copy of 'Gemfile.lock', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/Gemfile.lock b/Gemfile.lock[m
+[1mindex 13fe4c8..0dc0a4b 100644[m
+[1m--- a/Gemfile.lock[m
+[1m+++ b/Gemfile.lock[m
+[36m@@ -384,6 +384,11 @@[m [mGEM[m
+     stripe (19.6.2)[m
+       bigdecimal[m
+       logger[m
+[32m+[m[32m    tailwindcss-rails (4.6.0)[m
+[32m+[m[32m      railties (>= 7.0.0)[m
+[32m+[m[32m      tailwindcss-ruby (~> 4.0)[m
+[32m+[m[32m    tailwindcss-ruby (4.3.3-x64-mingw-ucrt)[m
+[32m+[m[32m    tailwindcss-ruby (4.3.3-x86_64-linux-gnu)[m
+     thor (1.5.0)[m
+     thruster (0.1.26)[m
+     thruster (0.1.26-x86_64-linux)[m
+[36m@@ -450,6 +455,7 @@[m [mDEPENDENCIES[m
+   solid_queue[m
+   stimulus-rails[m
+   stripe[m
+[32m+[m[32m  tailwindcss-rails (~> 4.6)[m
+   thruster[m
+   turbo-rails[m
+   tzinfo-data[m
+[36m@@ -588,6 +594,9 @@[m [mCHECKSUMS[m
+   sshkit (1.25.1) sha256=be3f10b9d6eb0b44d5eaba3f7cbe41bc6bb894bce4339688ac20124391455b78[m
+   stimulus-rails (1.3.4) sha256=765676ffa1f33af64ce026d26b48e8ffb2e0b94e0f50e9119e11d6107d67cb06[m
+   stripe (19.6.2) sha256=9a614976a25aba0adbef9ce770c1e242b0e7fcb20d61924fed5e79e1e10dd49c[m
+[32m+[m[32m  tailwindcss-rails (4.6.0) sha256=d99512867173d55c5ef8890427682299d8539f550cec1408b3d8667a538bd365[m
+[32m+[m[32m  tailwindcss-ruby (4.3.3-x64-mingw-ucrt) sha256=1bbd687aa375e3f37e2cee40192870899cdbb03a448c8e6137ceff4189fa4173[m
+[32m+[m[32m  tailwindcss-ruby (4.3.3-x86_64-linux-gnu) sha256=2337017ff8b02698480eae1e9637cf01faa0e4824db89d067a13c5a5ee38c9b2[m
+   thor (1.5.0) sha256=e3a9e55fe857e44859ce104a84675ab6e8cd59c650a49106a05f55f136425e73[m
+   thruster (0.1.26) sha256=6e45e807086b29d51404841bd1ad493b67cd95892fd65dc5afcdd32e82e94ce8[m
+   thruster (0.1.26-x86_64-linux) sha256=3117a6ee430663f845a0457699fe9a05232dcc6c396e2cc83504de5a223c60e8[m
