@@ -80,4 +80,4 @@ gem "json", "< 3.0"
 gem "ransack"
 gem "geocoder"
 
-gem "tailwindcss-rails", "~> 4.6"
+gem "tailwindcss-rails", "~> 4.7"
